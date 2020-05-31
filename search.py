@@ -3,7 +3,9 @@
 
 import os
 import sys
+assert sys.version >= '3.6'
 import pickle
+import pyautogui
 
 from enum import Enum
 
@@ -135,12 +137,15 @@ if __name__ == '__main__':
                 prev = ''
                 continue
 
-            prev += c.upper()
+            prev += c
             if state == InputState.END:
-                zhuyin = ''.join([english_to_zhuyin[x] for x in prev])
-                if zhuyin in merged:
-                    ans += prev
-                    length += 1
+                try:
+                    error = int(prev)
+                except:
+                    zhuyin = ''.join([english_to_zhuyin[x.upper()] for x in prev])
+                    if zhuyin in merged:
+                        ans += prev
+                        length += 1
                 prev = ''
                 state = InputState.START
 
@@ -149,5 +154,9 @@ if __name__ == '__main__':
         ans += '\n'
 
 
+print ('確保你現在是中文輸入法而且大寫要關閉!')
+while True:
+    s = input('give me the string you want to type (e.g. ji3g45j ) : ').lower()
+    pyautogui.typewrite(s + '\n')
 
 
