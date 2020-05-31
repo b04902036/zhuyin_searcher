@@ -80,7 +80,7 @@ def step(state, c, zhuyin_to_english):
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print ('usage : python[>=3.7] search.py <path/to/BreachCompilation/data')
+        print ('usage : python[>=3.7] search.py <path/to/BreachCompilation/data\n\te.g. python3.7 search.py ../BreachCompilation/data/y/z')
         exit()
 
     with open(sys.argv[1], 'rb') as f:
@@ -153,10 +153,12 @@ if __name__ == '__main__':
             print (f'email: {email}, password: {password}, zhuyin: {ans}')
         ans += '\n'
 
-
+import time
 print ('確保你現在是中文輸入法而且大寫要關閉!')
 while True:
-    s = input('give me the string you want to type (e.g. ji3g45j ) : ').lower()
-    pyautogui.typewrite(s + '\n')
-
+    s = input(f'give me the string you want to type (e.g. ji3g45j ) : ').lower()
+    pyautogui.typewrite(s + '\n\n')
+    ans = input('')
+    print (f'the zhuyin is actually {ans}')
+    print (f'')
 
