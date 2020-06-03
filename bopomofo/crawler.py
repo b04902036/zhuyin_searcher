@@ -83,7 +83,7 @@ def get_lv2_list(url):
     return [x.a['href'] for x in lv2]
 
 
-### get the level 3 list for words 
+### get the level 3 list for words
 def get_lv3_list(url):
     re = {}
     while True:

@@ -10,8 +10,8 @@ for f in fs:
     with open(f, 'r') as ff:
         x = eval(ff.read())
     for k in x:
-        total[k] = "True"
+        total[k] = x[k]
 
 print (len(total))
 with open('merged.dict', 'w') as f:
-    f.write(json.dumps(total))
+    f.write(str(total))
