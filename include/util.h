@@ -22,8 +22,8 @@ class Util {
         // for zhuyin to chinese
         const std::locale utf8_locale
                 = std::locale(std::locale(), new std::codecvt_utf8<wchar_t>());
-        const char* chinesePath = "./bopomofo/chinese.txt";
-        const char* zhuyinPath = "./bopomofo/zhuyin.txt";
+        const char* chinesePath = "./tools/bopomofo/chinese.txt";
+        const char* zhuyinPath = "./tools/bopomofo/zhuyin.txt";
 
         std::unordered_map<std::wstring, std::wstring> zhuyinToChineseMap;
 

@@ -5,8 +5,8 @@
 #include <omp.h>
 
 #include <unordered_map>
-#include "methods.h"
 #include "util.h"
+#include "methods.h"
 
 #define MAX_OMP_THREAD 1
 
@@ -35,7 +35,8 @@ int main(int argc, char* argv[]) {
         file[i].imbue(utf8_locale);
     }
    
-    class NoType* noTypes = new NoType(0);
+    // class NoType* noType = new NoType();
+    class OnlyChinese* onlyChinese = new OnlyChinese();
     
     while (getline(file[0], line)) {
         found = line.find_first_of(L"@");
@@ -46,7 +47,11 @@ int main(int argc, char* argv[]) {
         if (found == std::string::npos) {
             continue;
         }
-        noTypes->process(line.substr(found+1));        
+        line = line.substr(found+1);
+
+        // noType->process(line);
+        onlyChinese->process(line);
     }
-    noTypes->print();
+    // noType->print();
+    onlyChinese->print();
 }

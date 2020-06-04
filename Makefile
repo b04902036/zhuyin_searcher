@@ -1,12 +1,14 @@
-obj:=search.o util.o methods.o
+OBJ:=search.o util.o notype.o onlychinese.o
+EXE:=search
 
-all:$(obj)
-	mkdir -p result
-	g++ -std=c++11 -O2 -o search $(obj) -fopenmp
-%.o:src/%.cpp
-	g++ -std=c++11 -O2 -c $^ -o $@ -I./include -fopenmp
+
+all:
+	$(MAKE) -C ./build all
+	cp ./build/${EXE} ./
 
 .PHONY: clean
 clean:
-	rm -f ./*.o
+	rm -f ./build/*.o ./build/${EXE} ./${EXE}
 
+export OBJ
+export EXE
