@@ -1,16 +1,16 @@
 ## CNS final
 
 ### Run
-- ./search
+- `./search`
 
 ### Add new detection method
-1. add src/<new method>.h, define the class here
-2. add include/<new method>.cpp, define your function here
-3. add `#include "<new method>.h"` into include/methods.h
+1. add `src/newmethod.h`, define the class here
+2. add `include/newmethod.cpp`, define your function here
+3. add `#include "newmethod.h"` into `include/methods.h`
 4. use your class and function in `src/search.cpp`
-5. add <new method>.o into `obj` list in Makefile
+5. add `newmethod.o` into `OBJ` list in Makefile
 6. make clean && make 
-7. ./search
+7. `./search`
 
 ### Strategies
 - Global Strategy
