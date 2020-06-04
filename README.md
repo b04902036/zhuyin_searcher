@@ -17,7 +17,7 @@
     - Try to find possible zhuyin typing in english
     - If the matched string contains only digits, we will discard it. For example, `ppp040404`, since the matched string is `040404` (`暗暗暗`), it contains only digits.
 - NoType
-    - [a-zA-Z0-9]*chinese[a-zA-Z0-9]*
+    - [a-zA-Z0-9]\*chinese[a-zA-Z0-9]\*
 - OnlyChinese
     - chinese
 
