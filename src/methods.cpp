@@ -1,5 +1,8 @@
 #include <iostream>
 #include <string>
+#include <locale>
+#include <codecvt>
+
 #include "methods.h"
 #include "util.h"
 #include <algorithm>
@@ -10,7 +13,7 @@ void NoType::reset() {
     englishAns.clear();
     zhuyinAns.clear();
     chineseAns.clear();
-    size = 0;
+    length = 0;
     position.clear();
 }
 
@@ -47,14 +50,18 @@ void NoType::process(std::wstring input) {
                     englishAns += input.substr(idx-search+i+1, search-i);
                     zhuyinAns += ret.substr(i);
                     chineseAns += tmp;
-                    size += 1;
+                    length += 1;
                     position.push_back(std::pair<int, int>(idx-search+i+1, idx));
                     break;
                 }
             }
         }
     }
-    
+   
+    if (length == 0) {
+        return;
+    }
+
     bool sign = false;
     for (auto c: englishAns) {
         if (!iswdigit(c)) {
@@ -72,7 +79,7 @@ void NoType::process(std::wstring input) {
             }
             prev = p.second;
         }
-        if (cnt == 0) {
+        if (cnt == 0 || cnt != position.size() - 1) {
             return;
         }
         
@@ -85,11 +92,35 @@ void NoType::process(std::wstring input) {
         }
         tmpChineseAns += input.substr(now);
         ans += L"password: " + tmpChineseAns + L", zhuyin: " + zhuyinAns + L", origin: " + englishAns + L"\n";
+        ++size;
+
+        // output to file if the string is too long
+        if (size > 10000) {
+            output << ans;
+            ans = L"";
+            size = 0;
+        }
     } 
 }
 
 void NoType::print() {
-    std::wcout << ans;
+    output << ans;
 }
 
+NoType::NoType(int idx) {
+    const std::locale utf8_locale
+        = std::locale(std::locale(), new std::codecvt_utf8<wchar_t>());
+    char buf[0x20];
+    sprintf(buf, "result/NoType%d.txt", idx);
+    output.open(buf);
+    output.imbue(utf8_locale);
+    if (!output.is_open()) {
+        fprintf(stderr, "open result/NoType.txt failed\n");
+        exit(255);
+    }
+}
+
+NoType::~NoType() {
+    output.close();
+}
 
