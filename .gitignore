@@ -1,2 +1,6 @@
 # mid product
 **/*.o
+
+# ignore unecessary dict in bopomofo
+**/bopomofo/src_dict
+**/bopomofo/dict

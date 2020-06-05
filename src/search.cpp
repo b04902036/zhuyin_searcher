@@ -2,18 +2,15 @@
 #include <locale>
 #include <iostream>
 #include <fstream>
-#include <omp.h>
 
 #include <unordered_map>
 #include "util.h"
 #include "methods.h"
 
-#define MAX_OMP_THREAD 1
 
 class Util util;
 
 int main(int argc, char* argv[]) {
-    omp_set_num_threads(MAX_OMP_THREAD);
     std::wstring line;
     std::size_t found;
     std::setlocale(LC_ALL, "");
@@ -25,20 +22,23 @@ int main(int argc, char* argv[]) {
         exit(255);
     }
 
-    std::wifstream file[MAX_OMP_THREAD];
-    for (int i = 0; i < MAX_OMP_THREAD; ++i) {
-        file[i].open(argv[i+1]);
-        if (!file[i].is_open()) {
-            std::cout << argv[i+1] << " does not exist!" << std::endl;
-            exit(255);
-        }
-        file[i].imbue(utf8_locale);
+    std::wifstream file;
+    file.open(argv[1]);
+    if (!file.is_open()) {
+        std::cout << argv[1] << " does not exist!" << std::endl;
+        exit(255);
     }
-   
-    // class NoType* noType = new NoType();
+    file.imbue(utf8_locale);
+
+#ifdef NOTYPE
+    class NoType* noType = new NoType();
+#endif
+
+#ifdef ONLYCHINESE
     class OnlyChinese* onlyChinese = new OnlyChinese();
+#endif
     
-    while (getline(file[0], line)) {
+    while (getline(file, line)) {
         found = line.find_first_of(L"@");
         if (found == std::wstring::npos) {
             continue;
@@ -49,9 +49,22 @@ int main(int argc, char* argv[]) {
         }
         line = line.substr(found+1);
 
-        // noType->process(line);
+#ifdef NOTYPE
+        noType->process(line);
+#endif
+
+#ifdef ONLYCHINESE
         onlyChinese->process(line);
+#endif
+
     }
-    // noType->print();
+
+#ifdef NOTYPE
+    noType->print();
+#endif
+
+#ifdef ONLYCHINESE
     onlyChinese->print();
+#endif
+
 }

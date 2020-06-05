@@ -1,14 +1,21 @@
-OBJ:=search.o util.o notype.o onlychinese.o
+OBJ:=search.o util.o noType.o onlyChinese.o
 EXE:=search
+BUILD:=./build
+ENABLE+=-DNOTYPE -DONLYCHINESE
 
 
 all:
-	$(MAKE) -C ./build all
-	cp ./build/${EXE} ./
+	$(MAKE) -C ${BUILD} all
+	cp ${BUILD}/${EXE} ./
 
 .PHONY: clean
 clean:
-	rm -f ./build/*.o ./build/${EXE} ./${EXE}
+	rm -f ${BUILD}/*.o ${BUILD}/${EXE} ./${EXE}
+
+
+
 
 export OBJ
 export EXE
+export BUILD
+export ENABLE

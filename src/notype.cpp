@@ -3,7 +3,7 @@
 #include <locale>
 #include <codecvt>
 
-#include "notype.h"
+#include "noType.h"
 #include "util.h"
 #include <algorithm>
 
@@ -31,6 +31,9 @@ void NoType::process(std::wstring input) {
         
         if (util.isEnd(ret)) {
             for (search = 1; search < 4, idx - search > -1; ++search) {
+                if (util.isExceptionWord(input.substr(idx-search, 1))) {
+                    continue;
+                }
                 tmp = util.englishToZhuyin(input.substr(idx-search, 1));
                 if (tmp.length() > 0) {
                     ret = tmp + ret;
@@ -40,7 +43,7 @@ void NoType::process(std::wstring input) {
                 }
             }
             
-            if (search == 1) {
+            if (ret.length() == 1) {
                 continue;
             }
             
@@ -71,6 +74,7 @@ void NoType::process(std::wstring input) {
     }
 
     if (sign) {
+        /*
         int cnt = 0;
         int prev = -2;
         for (auto p: position) {
@@ -82,6 +86,7 @@ void NoType::process(std::wstring input) {
         if (cnt == 0 || cnt != position.size() - 1) {
             return;
         }
+        */
         
         std::wstring tmpChineseAns;
         int now = 0;
@@ -91,7 +96,7 @@ void NoType::process(std::wstring input) {
             tmpChineseAns += chineseAns[i];
         }
         tmpChineseAns += input.substr(now);
-        ans += L"password: " + tmpChineseAns + L", zhuyin: " + zhuyinAns + L", origin: " + englishAns + L"\n";
+        ans += L"password: " + tmpChineseAns + L", zhuyin: " + zhuyinAns + L", origin: " + englishAns + L"EOF\n";
         ++size;
         
         // output to file if the string is too long
@@ -111,7 +116,7 @@ void NoType::print() {
 NoType::NoType() {
     const std::locale utf8_locale
         = std::locale(std::locale(), new std::codecvt_utf8<wchar_t>());
-    output.open(outputFileName);
+    output.open(outputPath);
     output.imbue(utf8_locale);
     if (!output.is_open()) {
         fprintf(stderr, "open result/NoType.txt failed\n");
