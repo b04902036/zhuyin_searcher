@@ -13,7 +13,7 @@ class OnlyChinese {
     private:
         void reset();
         
-        const char* outputFileName = "result/OnlyChinese.txt";
+        const char* outputPath = "result/OnlyChinese.txt";
         std::wofstream output;
 
         std::wstring ans;

@@ -1,8 +1,3 @@
-password: 大察, zhuyin: ㄉㄚˋㄔㄚˊ, origin: 284t86
-password: 崖癌癌, zhuyin: ㄧㄞˊㄞˊㄞˊ, origin: u969696
-password: 岸晻歃, zhuyin: ㄢˋㄢˇㄕㄚˋ, origin: 0403g84
-password: 散晻啽, zhuyin: ㄙㄢˇㄢˇㄢˊ, origin: n030306
-password: 密馬, zhuyin: ㄇㄧˋㄇㄚˇ, origin: au4a83
-password: 密馬, zhuyin: ㄇㄧˋㄇㄚˇ, origin: au4a83
-password: 紙師肘, zhuyin: ㄓˇㄕ-ㄓㄡˇ, origin: 53G 5.3
-password: 甌恩甌恩, zhuyin: ㄡ-ㄣ-ㄡ-ㄣ-, origin: . p . p 
+version https://git-lfs.github.com/spec/v1
+oid sha256:f1d74bb4b0a1ecacfba2bc1b8f6b92eae7fb7abf99b51c6e8ba912e67830b0fb
+size 503

@@ -22,4 +22,6 @@
     - chinese
 
 ### Notice
+Please refer to README in each tool in `tools/` for more details
 - `tools/bopomofo/` contains a modified project from others github that crawl chinese <-> zhuyin mapping from Ministry of Education's dictionary, we need the merged.dict to check if a zhuyin combination can form a chinese
+- `tools/exception/` add zhuyin combination into exception list so that each methods could prevent from generate false positive of zhuyin password

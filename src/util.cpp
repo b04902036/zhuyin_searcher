@@ -30,6 +30,31 @@ Util::Util() :
         englishToZhuyinMap[typeInEnglishLower.substr(i, 1)] = typeInZhuyin.substr(i, 1);
     }
 
+    // for preventing conversion from english to infeasible zhuyin
+    std::wifstream exception(exceptionSentencePath);
+    if (!exception.is_open()) {
+        fprintf(stderr, "open exceptionSentence.txt failed\n");
+        exit(255);
+    }
+    exception.imbue(utf8_locale);
+    
+    std::wstring exceptionLine;
+    while (getline(exception, exceptionLine)) {
+        exceptionSentenceSet.insert(exceptionLine);
+    }
+    exception.close();
+
+    exception.open(exceptionWordPath);
+    if (!exception.is_open()) {
+        fprintf(stderr, "open exceptionWord.txt failed\n");
+        exit(255);
+    }
+    exception.imbue(utf8_locale);
+
+    while (getline(exception, exceptionLine)) {
+        exceptionWordSet.insert(exceptionLine);
+    }
+
     // for misc functions
     endSet.insert(L"˙");
     endSet.insert(L"ˊ");
@@ -66,6 +91,22 @@ std::wstring Util::englishToZhuyin(std::wstring english) {
     else {
         return std::wstring(L"");
     }
+}
+
+bool Util::isExceptionSentence(std::wstring str) {
+    auto it = exceptionSentenceSet.find(str);
+    if (it != exceptionSentenceSet.end()) {
+        return true;
+    }
+    return false;
+}
+
+bool Util::isExceptionWord(std::wstring str) {
+    auto it = exceptionWordSet.find(str);
+    if (it != exceptionWordSet.end()) {
+        return true;
+    }
+    return false;
 }
 
 bool Util::isEnd(std::wstring str) {

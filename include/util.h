@@ -17,6 +17,9 @@ class Util {
         std::wstring zhuyinToEnglish(std::wstring zhuyin);
         std::wstring englishToZhuyin(std::wstring english);
 
+        bool isExceptionSentence(std::wstring str);
+        bool isExceptionWord(std::wstring str);
+
         bool isEnd(std::wstring str);
     private:
         // for zhuyin to chinese
@@ -34,6 +37,12 @@ class Util {
         std::unordered_map<std::wstring, std::wstring> zhuyinToEnglishMap;
         std::unordered_map<std::wstring, std::wstring> englishToZhuyinMap;
         std::size_t size = 42;
+
+        // for prevent conversion from english to infeasible zhuyin
+        const char* exceptionSentencePath = "./tools/exception/exceptionSentence.txt";
+        const char* exceptionWordPath = "./tools/exception/exceptionWord.txt";
+        std::unordered_set<std::wstring> exceptionSentenceSet;
+        std::unordered_set<std::wstring> exceptionWordSet;
 
         // for misc functions
         std::unordered_set<std::wstring> endSet;

@@ -13,7 +13,7 @@ class NoType {
     private:
         void reset();
 
-        const char* outputFileName = "result/NoType.txt";
+        const char* outputPath = "result/NoType.txt";
         std::wofstream output;
 
         std::wstring ans;

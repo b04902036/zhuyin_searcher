@@ -3,7 +3,7 @@
 #include <locale>
 #include <codecvt>
 
-#include "onlychinese.h"
+#include "onlyChinese.h"
 #include "util.h"
 #include <algorithm>
 
@@ -94,7 +94,7 @@ void OnlyChinese::process(std::wstring input) {
             tmpChineseAns += chineseAns[i];
         }
         tmpChineseAns += input.substr(now);
-        ans += L"password: " + tmpChineseAns + L", zhuyin: " + zhuyinAns + L", origin: " + englishAns + L"\n";
+        ans += L"password: " + tmpChineseAns + L", zhuyin: " + zhuyinAns + L", origin: " + englishAns + L"EOF\n";
         ++size;
         
         // output to file if the string is too long
@@ -114,7 +114,7 @@ void OnlyChinese::print() {
 OnlyChinese::OnlyChinese() {
     const std::locale utf8_locale
         = std::locale(std::locale(), new std::codecvt_utf8<wchar_t>());
-    output.open(outputFileName);
+    output.open(outputPath);
     output.imbue(utf8_locale);
     if (!output.is_open()) {
         fprintf(stderr, "open result/OnlyChinese.txt failed\n");
