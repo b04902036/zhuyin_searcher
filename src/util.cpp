@@ -1,11 +1,14 @@
 #include "util.h"
 #include <fstream>
 #include <algorithm>
+#include <iostream>
 
 Util::Util() :
         typeInZhuyin(L"ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄧㄨㄩㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦ˙ˊˇˋ-"),
     typeInEnglishLower(L"1qaz2wsxedcrfv5tgbyhnujm8ik,9ol.0p;/-7634 "),
     typeInEnglishUpper(L"1QAZ2WSXEDCRFV5TGBYHNUJM8IK,9OL.0P;/-7634 ") {
+    std::setlocale(LC_ALL, "");
+    
     // for zhuyin to chinese
     std::wifstream chinese(chinesePath);
     std::wifstream zhuyin(zhuyinPath);
@@ -50,7 +53,7 @@ Util::Util() :
         exit(255);
     }
     exception.imbue(utf8_locale);
-
+    
     while (getline(exception, exceptionLine)) {
         exceptionWordSet.insert(exceptionLine);
     }

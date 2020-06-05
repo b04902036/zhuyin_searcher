@@ -31,10 +31,8 @@ void NoType::process(std::wstring input) {
         
         if (util.isEnd(ret)) {
             for (search = 1; search < 4, idx - search > -1; ++search) {
-                if (util.isExceptionWord(input.substr(idx-search, 1))) {
-                    continue;
-                }
                 tmp = util.englishToZhuyin(input.substr(idx-search, 1));
+
                 if (tmp.length() > 0) {
                     ret = tmp + ret;
                 }
@@ -43,11 +41,14 @@ void NoType::process(std::wstring input) {
                 }
             }
             
-            if (ret.length() == 1) {
+            if (search == 1) {
                 continue;
             }
             
             for (int i = 0; i < search - 1; ++i) {
+                if (util.isExceptionWord(ret.substr(i))) {
+                    continue;
+                }
                 tmp = util.zhuyinToChinese(ret.substr(i));    
                 if (tmp.length() > 0) {
                     englishAns += input.substr(idx-search+i+1, search-i);

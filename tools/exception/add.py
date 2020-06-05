@@ -5,6 +5,10 @@ import sys
 assert sys.version >= '3.6'
 
 CONST_CHOICE = 5
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+EXCEPTION_SENTENCE = os.path.join(BASE_DIR, 'exceptionSentence.txt')
+EXCEPTION_WORD = os.path.join(BASE_DIR, 'exceptionWord.txt')
+TMP = os.path.join(BASE_DIR, 'tmp')
 
 def parse_zhuyin(line, length):
     """
@@ -43,10 +47,13 @@ if __name__ == '__main__':
         print ('usage: python3 ./add.py <path/to/result>\n\te.g. python3.6 ./add.py ../../result/OnlyChinese.txt')
         exit(255)
 
-    with open(sys.argv[1]) as f:
-        result = f.read().split('\n')
+    result = open(sys.argv[1])
 
-    for line in result:
+    while True:
+        line = result.readline()
+        if not line:
+            break
+
         length = []
         prev = 0
         others = re.findall('[ -~]+', line)
@@ -74,19 +81,19 @@ if __name__ == '__main__':
                 print (f'[{i+CONST_CHOICE+1}] add {zhuyin} into exception sentence list')
             for i, zhuyin in enumerate(zhuyins):
                 if length[i] == 1:
-                    print (f'[i+CONST_CHOICE+1+len(zhuyins)] add {zhuyin} into exception word list')
+                    print (f'[{i+CONST_CHOICE+1+len(zhuyins)}] add {zhuyin} into exception word list')
                     one_word.append(zhuyin)
 
             try:
                 choice = int(input('> '))
                 if choice == 1:
-                    os.system('tail exceptionSentence.txt')
+                    os.system(f'tail {EXCEPTION_SENTENCE}')
                 elif choice == 2:
-                    os.system('head -n -1 exceptionSentence.txt > exceptionSentence.txt.tmp; mv exceptionSentence.txt.tmp exceptionSentence.txt')
+                    os.system(f'head -n -1 {EXCEPTION_SENTENCE} > {EXCEPTION_SENTENCE}.tmp; mv {EXCEPTION_SENTENCE}.tmp {EXCEPTION_SENTENCE}')
                 if choice == 3:
-                    os.system('tail exceptionWord.txt')
+                    os.system(f'tail {EXCEPTION_WORD}')
                 elif choice == 4:
-                    os.system('head -n -1 exceptionWord.txt > exceptionWord.txt.tmp; mv exceptionWord.txt.tmp exceptionWord.txt')
+                    os.system(f'head -n -1 {EXCEPTION_WORD} > {EXCEPTION_WORD}.tmp; mv {EXCEPTION_WORD}.tmp {EXCEPTION_WORD}')
                 elif choice == 5:
                     break
                 else:
@@ -95,18 +102,18 @@ if __name__ == '__main__':
                         print (f'[!] {choice+CONST_CHOICE+1} is out of the range. Should be in {CONST_CHOICE+1} ~ {len(zhuyins)+CONST_CHOICE} inclusive')
                         continue
                     elif choice < len(zhuyins):
-                        with open('tmp', 'w') as f:
+                        with open(f'{TMP}', 'w') as f:
                             f.write(zhuyins[choice]+'\n')
-                        os.system(f'cat exceptionSentence.txt tmp > exceptionSentence.txt.tmp; mv exceptionSentence.txt.tmp exceptionSentence.txt; rm tmp')
+                        os.system(f'cat {EXCEPTION_SENTENCE} {TMP} > {EXCEPTION_SENTENCE}.tmp; mv {EXCEPTION_SENTENCE}.tmp {EXCEPTION_SENTENCE}; rm {TMP}')
                         print (f'[+] {zhuyins[choice]} added successfully. You can check it by input 1')
                     else:
                         choice -= len(zhuyins)
                         if choice > len(one_word) - 1:
                             print (f'[!] {choice+len(zhuyins)+CONST_CHOICE+1} is out of the range. Should be in {len(zhuyins)+CONST_CHOICE+1} ~ {len(one_word)+len(zhuyins)+CONST_CHOICE} inclusive')
                             continue
-                        with open('tmp', 'w') as f:
+                        with open(f'{TMP}', 'w') as f:
                             f.write(one_word[choice]+'\n')
-                        os.system(f'cat exceptionWord.txt tmp > exceptionWord.txt.tmp; mv exceptionWord.txt.tmp exceptionWord.txt; rm tmp')
+                        os.system(f'cat {EXCEPTION_WORD} {TMP} > {EXCEPTION_WORD}.tmp; mv {EXCEPTION_WORD}.tmp {EXCEPTION_WORD}; rm {TMP}')
                         print (f'[+] {one_word[choice]} added successfully. You can check it by input 3')
 
             except KeyboardInterrupt:
