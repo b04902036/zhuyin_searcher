@@ -59,11 +59,22 @@ Util::Util() :
     }
 
     // for misc functions
-    endSet.insert(L"˙");
-    endSet.insert(L"ˊ");
-    endSet.insert(L"ˇ");
-    endSet.insert(L"ˋ");
-    endSet.insert(L"-");
+    std::wstring headString = L"ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙ";
+    std::wstring middleString = L"ㄧㄨㄩ";
+    std::wstring bottomString = L"ㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦ";
+    std::wstring endString = L"˙ˊˇˋ-";
+    for (int i = 0; i < headString.length(); ++i) {
+        headSet.insert(headString.substr(i, 1));
+    }
+    for (int i = 0; i < middleString.length(); ++i) {
+        middleSet.insert(middleString.substr(i, 1));
+    }
+    for (int i = 0; i < bottomString.length(); ++i) {
+        bottomSet.insert(bottomString.substr(i, 1));
+    }
+    for (int i = 0; i < endString.length(); ++i) {
+        endSet.insert(endString.substr(i, 1));
+    }
 }
 
 std::wstring Util::zhuyinToChinese(std::wstring zhuyin) {
@@ -107,6 +118,30 @@ bool Util::isExceptionSentence(std::wstring str) {
 bool Util::isExceptionWord(std::wstring str) {
     auto it = exceptionWordSet.find(str);
     if (it != exceptionWordSet.end()) {
+        return true;
+    }
+    return false;
+}
+
+bool Util::isHead(std::wstring str) {
+    auto it = headSet.find(str);
+    if (it != headSet.end()) {
+        return true;
+    }
+    return false;
+}
+
+bool Util::isMiddle(std::wstring str) {
+    auto it = middleSet.find(str);
+    if (it != middleSet.end()) {
+        return true;
+    }
+    return false;
+}
+
+bool Util::isBottom(std::wstring str) {
+    auto it = bottomSet.find(str);
+    if (it != bottomSet.end()) {
         return true;
     }
     return false;

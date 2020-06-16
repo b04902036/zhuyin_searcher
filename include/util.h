@@ -20,6 +20,9 @@ class Util {
         bool isExceptionSentence(std::wstring str);
         bool isExceptionWord(std::wstring str);
 
+        bool isHead(std::wstring str);
+        bool isMiddle(std::wstring str);
+        bool isBottom(std::wstring str);
         bool isEnd(std::wstring str);
     private:
         // for zhuyin to chinese
@@ -45,6 +48,9 @@ class Util {
         std::unordered_set<std::wstring> exceptionWordSet;
 
         // for misc functions
+        std::unordered_set<std::wstring> headSet;
+        std::unordered_set<std::wstring> middleSet;
+        std::unordered_set<std::wstring> bottomSet;
         std::unordered_set<std::wstring> endSet;
 };
 

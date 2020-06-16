@@ -2,10 +2,10 @@ SRC = ../
 
 
 all:$(OBJ)
-	g++ ${ENABLE} -std=c++11 -O2 -o ${EXE} $(OBJ) -fopenmp
+	${CXX} ${CXXFLAGS} ${ENABLE} -std=c++11 -O2 -o ${EXE} $(OBJ)
 
-%.o: ../src/%.cpp
-	g++ ${ENABLE} -std=c++11 -O2 -c $^ -o $@ -I${SRC}/include -fopenmp
+%.o: ${SRC}/src/%.cpp
+	${CXX} ${CXXFLAGS} ${ENABLE} -std=c++11 -O2 -c $^ -o $@ -I${SRC}/include/ 
 
 .PHONY: clean
 clean:
