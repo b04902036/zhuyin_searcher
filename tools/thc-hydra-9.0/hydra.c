@@ -3731,6 +3731,7 @@ int main(int argc, char *argv[]) {
     tmp_time = time(NULL);
 
     for (head_no = 0; head_no < hydra_options.max_use; head_no++) {
+      printf("head_no: %d, target_no : %d\n", head_no, hydra_heads[head_no]->target_no);
       if (debug > 1 && hydra_heads[head_no]->active != HEAD_DISABLED)
         printf("[DEBUG] head_no[%d] to target_no %d active %d\n", head_no, hydra_heads[head_no]->target_no, hydra_heads[head_no]->active);
        
