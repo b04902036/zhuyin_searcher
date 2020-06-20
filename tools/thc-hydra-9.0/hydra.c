@@ -15,8 +15,9 @@
 #include <term.h>
 #endif
 
-int __jason_int, __jason_read;
-
+int __jason_read;
+size_t __jason_int;
+int __jason_stop;
 
 void usage_oracle(const char* service);
 void usage_oracle_listener(const char* service);
@@ -1630,8 +1631,8 @@ int32_t hydra_send_next_pair(int32_t target_no, int32_t head_no) {
               //hydra_targets[target_no]->pass_ptr++;
               // __jason
               if ((__jason_read = getline(&(hydra_targets[target_no]->pass_ptr), &__jason_int, stdin)) == -1) {
-                  fprintf(stderr, "[JASON] EOF\n");
-                  exit(255);
+                  ++__jason_stop;
+                  __jason_read = 1;
               }
               hydra_targets[target_no]->pass_ptr[__jason_read-1] = '\0';
               // while (*hydra_targets[target_no]->pass_ptr != 0)
@@ -1651,7 +1652,11 @@ int32_t hydra_send_next_pair(int32_t target_no, int32_t head_no) {
                 return hydra_send_next_pair(target_no, head_no);        // little trick to keep the code small
               }
             } else {            // standard -l -L -p -P mode
-              hydra_heads[head_no]->current_pass_ptr = hydra_targets[target_no]->pass_ptr;
+              if (hydra_heads[head_no]->current_pass_ptr != NULL) {
+                // free(hydra_heads[head_no]->current_pass_ptr);      
+                hydra_heads[head_no]->current_pass_ptr = NULL;      
+              }
+              hydra_heads[head_no]->current_pass_ptr = strdup(hydra_targets[target_no]->pass_ptr);
               hydra_targets[target_no]->pass_no++;
               // double check
               if (hydra_targets[target_no]->pass_no >= hydra_brains.countpass) {
@@ -1669,8 +1674,8 @@ int32_t hydra_send_next_pair(int32_t target_no, int32_t head_no) {
               } else {
                 // __jason
                 if ((__jason_read = getline(&(hydra_targets[target_no]->pass_ptr), &__jason_int, stdin)) == -1) {
-                    fprintf(stderr, "[JASON] EOF\n");
-                    exit(255);
+                    ++__jason_stop;
+                    __jason_read = 1;
                 }
                 hydra_targets[target_no]->pass_ptr[__jason_read-1] = '\0';
                 // hydra_targets[target_no]->pass_ptr++;
@@ -1748,8 +1753,8 @@ int32_t hydra_send_next_pair(int32_t target_no, int32_t head_no) {
                 } else {        // -p -P mode
                   // __jason
                   if ((__jason_read = getline(&(hydra_targets[target_no]->pass_ptr), &__jason_int, stdin)) == -1) {
-                      fprintf(stderr, "[JASON] EOF\n");
-                      exit(255);
+                      ++__jason_stop;
+                      __jason_read = 1;
                   }
                   hydra_targets[target_no]->pass_ptr[__jason_read-1] = '\0';
                   // hydra_targets[target_no]->pass_ptr++;
@@ -3227,16 +3232,12 @@ int main(int argc, char *argv[]) {
       }
       // TODO__jason
       if (hydra_options.passfile != NULL) {
-        hydra_brains.countpass = 18446744073709551615;
-        hydra_brains.sizepass = 1;
+        hydra_brains.countpass = 18446744073709;
+        hydra_brains.sizepass = 10000000000;
         pass_ptr = malloc(256);
         if (pass_ptr == NULL)
           bail("Could not allocate enough memory for password file data");
-        if ((__jason_read  = getline(&pass_ptr, &__jason_int, stdin)) == -1) {
-            fprintf(stderr, "[JASON] EOF\n");
-            exit(255);
-        }
-        pass_ptr[__jason_read-1] = '\0';
+        pass_ptr[0] = '\0';
       }
     } else {
       if ((cfp = fopen(hydra_options.colonfile, "r")) == NULL) {
@@ -3417,8 +3418,7 @@ int main(int argc, char *argv[]) {
     for (i = 0; i < hydra_brains.targets; i++) {
       hydra_targets[i]->login_ptr = login_ptr;
       hydra_targets[i]->pass_ptr = malloc(256);
-      hydra_targets[i]->pass_ptr[0] = 'b';
-      hydra_targets[i]->pass_ptr[1] = '\0';
+      hydra_targets[i]->pass_ptr[0] = '\0';
 
       if (hydra_options.loop_mode) {
         if (hydra_options.try_password_same_as_login)
@@ -3731,7 +3731,6 @@ int main(int argc, char *argv[]) {
     tmp_time = time(NULL);
 
     for (head_no = 0; head_no < hydra_options.max_use; head_no++) {
-      printf("head_no: %d, target_no : %d\n", head_no, hydra_heads[head_no]->target_no);
       if (debug > 1 && hydra_heads[head_no]->active != HEAD_DISABLED)
         printf("[DEBUG] head_no[%d] to target_no %d active %d\n", head_no, hydra_heads[head_no]->target_no, hydra_heads[head_no]->active);
        
@@ -3792,11 +3791,36 @@ int main(int argc, char *argv[]) {
                 loop_cnt = 0;
                 if (hydra_send_next_pair(hydra_heads[head_no]->target_no, head_no) == -1)
                   hydra_kill_head(head_no, 1, 0);
+                if (__jason_stop >= hydra_options.max_use * hydra_options.tasks) {
+                if (hydra_options.exit_found) {   // option set says quit target after on valid login/pass pair is found
+                  if (hydra_targets[hydra_heads[head_no]->target_no]->done == TARGET_ACTIVE) {
+                    hydra_targets[hydra_heads[head_no]->target_no]->done = TARGET_FINISHED;     // mark target as done
+                    hydra_brains.finished++;
+                    printf("[STATUS] attack finished for %s (valid pair found)\n", hydra_targets[hydra_heads[head_no]->target_no]->target);
+                  }
+                  if (hydra_options.exit_found == 2) {
+                    for (j = 0; j < hydra_brains.targets; j++)
+                      if (hydra_targets[j]->done == TARGET_ACTIVE) {
+                        hydra_targets[j]->done = TARGET_FINISHED;
+                        hydra_brains.finished++;
+                     }
+                  }
+                  for (j = 0; j < hydra_options.max_use; j++)
+                    if (hydra_heads[j]->active >= 0 && (hydra_heads[j]->target_no == target_no || hydra_options.exit_found == 2)) {
+                      if (hydra_brains.targets > hydra_brains.finished && hydra_options.exit_found < 2)
+                        hydra_kill_head(j, 1, 0); // kill all heads working on the target
+                      else
+                        hydra_kill_head(j, 1, 2); // kill all heads working on the target
+                    }
+                  continue;
+                }
+                    fprintf(stderr, "[JASON] FINISHED\n");
+                    exit(255);
+                }
                 break;
   
               case 'F':          // valid password found
                 hydra_brains.found++;
-                hydra_heads[head_no]->current_pass_ptr = hydra_targets[hydra_heads[head_no]->target_no]->pass_ptr;
                 if (colored_output) {
                   if (hydra_heads[head_no]->current_login_ptr == NULL || strlen(hydra_heads[head_no]->current_login_ptr) == 0) {
                     if (hydra_heads[head_no]->current_pass_ptr == NULL || strlen(hydra_heads[head_no]->current_pass_ptr) == 0)
